@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | Invoice Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header" style="text-align: center; margin-bottom: 2rem;">
+                <div class="auth-logo" style="font-size: 3rem; margin-bottom: 0.5rem;">🏢</div>
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to manage your invoices</p>
+            </div>
+            <form id="signin-form">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="signin-email" class="form-input" placeholder="Enter your email" required
+                        value="maniyadhruvik07@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="signin-password" class="form-input" placeholder="Enter your password"
+                        required value="maniya@#07">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Role</label>
+                    <select id="signin-role-select" class="form-input" style="cursor: pointer;">
+                        <option value="Full Access">Full Access (Admin)</option>
+                        <option value="Order">Order Management</option>
+                        <option value="Fitting">Fitting Department</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Role PIN</label>
+                    <input type="password" id="signin-pin" class="form-input"
+                        placeholder="Enter PIN (e.g. 0000 / 1111 / 2222)">
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Sign In</button>
+            </form>
+            <div class="auth-footer">
+                Don't have an account? <a href="signup.html" class="auth-link">Sign Up</a>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
