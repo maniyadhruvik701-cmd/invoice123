@@ -595,7 +595,7 @@ body {
 
 .print-invoice .pi-grid {
     display: grid;
-    grid-template-columns: 1.5fr 1fr;
+    grid-template-columns: 1fr 1fr;
     border: 1px solid #ccc;
     margin-bottom: 10px;
 }
