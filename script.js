@@ -8,7 +8,6 @@ let invoiceInfo = {};
 let transportInfo = {};
 let discountPct = 0;
 let igstPct = 0;
-let userRole = 'Full Access'; // Default role
 let editingItemIndex = -1;
 
 function saveDraft() {
@@ -20,7 +19,6 @@ function saveDraft() {
         transportInfo,
         discountPct,
         igstPct,
-        userRole,
         lastSection: document.getElementById('section-history').classList.contains('active') ? 'history' : 'entry'
     };
     localStorage.setItem('currentDraft', JSON.stringify(draft));
@@ -37,59 +35,15 @@ function loadDraft() {
         transportInfo = draft.transportInfo || {};
         discountPct = draft.discountPct || 0;
         igstPct = draft.igstPct || 0;
-        userRole = draft.userRole || localStorage.getItem('userRole') || 'Full Access';
 
         renderItems();
         renderBuyer();
         renderSupplier();
         renderInvoiceInfo();
-        applyRolePermissions();
 
         if (draft.lastSection === 'history') {
             switchSection('history');
         }
-    } else {
-        // If no draft, still check for saved role
-        userRole = localStorage.getItem('userRole') || 'Full Access';
-        applyRolePermissions();
-    }
-}
-
-// ============================
-// ROLE BASED ACCESS
-// ============================
-function applyRolePermissions() {
-    const body = document.body;
-    body.setAttribute('data-role', userRole);
-
-    // Hide/Show elements based on role
-    // Order role: Hide Delete/Edit, Hide Print? 
-    // Fitting role: Hide Amount?
-    // Full Access: Show everything
-
-    const isOrder = userRole === 'Order';
-    const isFitting = userRole === 'Fitting';
-
-    // Example: Hide amount columns for Fitting role
-    const amountHeaders = document.querySelectorAll('th:nth-child(5), td:nth-child(5)');
-    const totalBar = document.querySelector('.inv-totals-bar');
-
-    if (isFitting) {
-        amountHeaders.forEach(el => el.style.display = 'none');
-        if (totalBar) totalBar.style.display = 'none';
-    } else {
-        amountHeaders.forEach(el => el.style.display = '');
-        if (totalBar) totalBar.style.display = '';
-    }
-
-    // Hide actions for restricted roles
-    const actionColumns = document.querySelectorAll('th:nth-child(6), td:nth-child(6)');
-    if (isOrder || isFitting) {
-        actionColumns.forEach(el => el.style.display = 'none');
-        document.querySelector('.bottom-bar').style.display = 'none';
-    } else {
-        actionColumns.forEach(el => el.style.display = '');
-        document.querySelector('.bottom-bar').style.display = 'flex';
     }
 }
 
@@ -410,7 +364,6 @@ function renderItems() {
     });
 
     recalcTotals();
-    applyRolePermissions(); // Re-apply permissions to newly rendered rows
 }
 
 function recalcTotals() {
@@ -767,30 +720,12 @@ if (signinForm) {
         e.preventDefault();
         const email = document.getElementById('signin-email').value;
         const password = document.getElementById('signin-password').value;
-        const selectedRole = document.getElementById('signin-role-select').value;
-        const pin = document.getElementById('signin-pin').value;
 
         // AUTH LOGIC
         if (email === 'maniyadhruvik07@gmail.com' && password === 'maniya@#07') {
-
-            // Validate PIN based on selected role
-            let isValid = false;
-            if (selectedRole === 'Order' && pin === '1111') isValid = true;
-            else if (selectedRole === 'Fitting' && pin === '2222') isValid = true;
-            else if (selectedRole === 'Full Access' && pin === '0000') isValid = true;
-            else if (selectedRole === 'Full Access' && pin === '') {
-                // Admin can skip PIN if they want, or we can require it
-                isValid = true;
-            }
-
-            if (isValid) {
-                alert(`Welcome, Dhruvik! Access Level: ${selectedRole}`);
-                localStorage.setItem('isAuthenticated', 'true');
-                localStorage.setItem('userRole', selectedRole);
-                window.location.href = 'index.html';
-            } else {
-                alert(`❌ Invalid PIN for ${selectedRole} role.`);
-            }
+            alert('Welcome, Dhruvik!');
+            localStorage.setItem('isAuthenticated', 'true');
+            window.location.href = 'index.html';
         } else {
             alert('❌ Invalid email or password.');
         }
