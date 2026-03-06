@@ -352,7 +352,7 @@ function renderItems() {
         tr.innerHTML = `
             <td>${i + 1}</td>
             <td>${item.desc}</td>
-            <td>${item.challanDate}</td>
+            <td>${formatDate(item.challanDate)}</td>
             <td>${item.challanNo}</td>
             <td style="text-align:right">₹ ${item.amount.toLocaleString('en-IN')}</td>
             <td style="text-align:center">
@@ -409,6 +409,18 @@ function numberToWords(num) {
     if (num > 0) result += threeDigits(num);
 
     return result.trim();
+}
+
+/**
+ * Formats yyyy-mm-dd to dd-mm-yyyy
+ */
+function formatDate(dateStr) {
+    if (!dateStr || dateStr === '-') return '-';
+    const parts = dateStr.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
+    return dateStr;
 }
 
 // ============================
@@ -491,7 +503,8 @@ function renderHistory() {
         const buyer = inv.buyerInfo || {};
         const info = inv.invoiceInfo || {};
         const total = calcGrandTotal(inv);
-        const date = info.invDate || (inv.savedAt ? inv.savedAt.split('T')[0] : '-');
+        let date = info.invDate || (inv.savedAt ? inv.savedAt.split('T')[0] : '-');
+        date = formatDate(date);
 
         const card = document.createElement('div');
         card.className = 'history-card';
@@ -598,7 +611,7 @@ function printInvoice(index) {
         itemRows += `<tr>
             <td>${i + 1}</td>
             <td>${item.desc}</td>
-            <td>${item.challanDate}</td>
+            <td>${formatDate(item.challanDate)}</td>
             <td>${item.challanNo}</td>
             <td style="text-align:right">₹ ${item.amount.toLocaleString('en-IN')}</td>
         </tr>`;
@@ -606,38 +619,25 @@ function printInvoice(index) {
 
     const html = `
     <div class="print-invoice">
-        <h2>Tax Invoice</h2>
 
-        <!-- Supplier + Meta -->
+        <!-- Supplier + Buyer Grid -->
         <div class="pi-grid">
             <div class="pi-cell">
-                <strong>Supplier: ${supplier.name || '-'}</strong><br>
+                <strong>Supplier Detail:</strong><br>
+                <strong>${supplier.name || '-'}</strong><br>
                 Address: ${supplier.address || '-'}<br>
                 City: ${supplier.city || '-'}, Pincode: ${supplier.pincode || '-'}<br>
                 State: ${supplier.state || '-'}<br>
                 Ph: ${supplier.phone || '-'}
             </div>
             <div class="pi-cell">
-                <strong>Invoice No:</strong> ${info.invNo || '-'}<br>
-                <strong>Date:</strong> ${info.invDate || '-'}<br>
-                <strong>Delivery Challans:</strong> ${info.dc || '-'}<br>
-                <strong>Bill Due Days:</strong> ${info.due || '-'}
-            </div>
-        </div>
-
-        <!-- Buyer Info -->
-        <div class="pi-grid">
-            <div class="pi-cell">
-                <strong>Buyer's Name:</strong> ${buyer.name || '-'}<br>
-                <strong>Address:</strong> ${buyer.address || '-'}<br>
-
-                <strong>City:</strong> ${buyer.city || '-'}<br>
-                <strong>Pincode:</strong> ${buyer.pincode || '-'}<br>
-                <strong>State:</strong> ${buyer.state || '-'}<br>
-                <strong>Phone No:</strong> ${buyer.phone || '-'}
-            </div>
-            <div class="pi-cell">
-                <strong>State of Supply:</strong> ${buyer.state || '-'}
+                <strong>Buyer Detail:</strong><br>
+                <strong>${buyer.name || '-'}</strong><br>
+                Address: ${buyer.address || '-'}<br>
+                City: ${buyer.city || '-'}<br>
+                Pincode: ${buyer.pincode || '-'}<br>
+                State: ${buyer.state || '-'}<br>
+                Phone No: ${buyer.phone || '-'}
             </div>
         </div>
 
@@ -670,6 +670,17 @@ function printInvoice(index) {
         </div>
 
         <div style="text-align:right; margin-top:10px; font-size:11px;">E & O.E</div>
+        
+        <div style="display:flex; justify-content:space-between; margin-top:60px; font-size:12px;">
+            <div style="text-align:center; width:200px;">
+                <div style="margin-bottom:40px; visibility:hidden;">.</div>
+                <div style="border-top:1px solid #000; padding-top:5px;">Receiver's Signature</div>
+            </div>
+            <div style="text-align:center; width:250px;">
+                <div style="font-weight:bold; margin-bottom:40px;">For, ${supplier.name || '-'}</div>
+                <div style="border-top:1px solid #000; padding-top:5px;">Authorized Signatory</div>
+            </div>
+        </div>
     </div>`;
 
     document.getElementById('print-area').innerHTML = html;
